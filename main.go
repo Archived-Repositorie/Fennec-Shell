@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import ( 
+	"fmt"
+	"fs/config"
+)
 
 func main() {
-	fmt.Println("test")
+	config.Run()
+	fmt.Println("\ntest")
 }
