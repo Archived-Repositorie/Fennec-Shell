@@ -1,6 +1,6 @@
 # Maintainer: JustFoxxo <justafoxxo@outlook.com>
 pkgname=fennec-shell
-pkgver=1.0.r3.637588f
+pkgver=1.0.r5.7715ddd
 pkgrel=1
 pkgdesc="A Shell written in Go"
 arch=(x86_64)
