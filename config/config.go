@@ -35,11 +35,11 @@ func Run() {
 		config := ConfigDefault
 		output, err := json.Marshal(config)
 
-		fmt.Println(magenta("First run! Welcome to Fennec Shell"))
+		fmt.Println(magenta("First run! Welcome to Fennec Shell"), "\nWe need root privileges for setup files")
 		cmd.Mkdir(ConfigDir, true)
 
 		util.Error(err)
-		
+
 		cmd.Touch(ConfigPath, true)
 		cmd.Echo(string(output), ConfigPath, ">", true)
 	}

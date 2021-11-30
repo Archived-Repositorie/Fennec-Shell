@@ -36,8 +36,7 @@ func Touch(pathToFile string, root bool) {
 	}
 
 	command := fmt.Sprintf("%vtouch %v", sudo, pathToFile)
-	fmt.Println(command)
-	
+
 	cmd := exec.Command("bash", "-c", command)
 	err := cmd.Run()
 	util.Error(err)
