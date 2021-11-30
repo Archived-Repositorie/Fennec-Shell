@@ -1,2 +1,2 @@
 # Fennec-Shell
-A multi platform shell made in Go language
+A Shell made in Go language
