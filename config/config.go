@@ -23,17 +23,19 @@ var ConfigDefault = ConfigStruct{
 	UserConfig: "~/.local/share/fennecshell/config.json",
 }
 
-var Config ConfigStruct
-
 var ConfigDir = "/usr/config/fennecshell/"
 var ConfigFile = "config.json"
 var ConfigPath = ConfigDir+ConfigFile
+var Config = ConfigDefault
+
+var ConfigJson = json.Unmarshal(util.GetValue(ConfigDir), &Config)
+
+
 
 func Run() {
-	if !cmd.Exist(ConfigPath) {
+	if !util.Exist(ConfigPath) {
 		magenta := color.New(color.Bold, color.BgHiMagenta).SprintFunc()
-		config := ConfigDefault
-		output, err := json.Marshal(config)
+		output, err := json.Marshal(ConfigDefault)
 
 		fmt.Println(magenta("First run! Welcome to Fennec Shell"), "\nWe need root privileges for setup files")
 		cmd.Mkdir(ConfigDir, true)
