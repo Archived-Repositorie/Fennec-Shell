@@ -1,7 +1,0 @@
-{
-    "global_bin" : "/usr/share/fennecshell/bin",
-    "global_config" : "/usr/share/fennecshell/config.json",
-    "user_bin" : "~/.local/share/fennecshell/bin",
-    "user_config" : "~/.local/share/fennecshell/config.json",
-    "config" : "/usr/config/fennecshell/config.json"
-}
