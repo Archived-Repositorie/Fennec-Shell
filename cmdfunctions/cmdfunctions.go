@@ -2,7 +2,6 @@ package cmdfunctions
 
 import (
 	"fmt"
-	"fs/util"
 	"os"
 	"os/exec"
 )
@@ -13,45 +12,47 @@ func Response(cmd *exec.Cmd) {
 	cmd.Stdin = os.Stdin
 }
 
-func RunCommand(command string) *exec.Cmd {
+func RunCommand(command string) (*exec.Cmd, error) {
 	cmd := exec.Command("bash", "-c", command)
 	err := cmd.Run()
-	util.Error(err)
-	return cmd
+	return cmd,err
 }
 
-func Mkdir(dir string, root bool) {
+func Mkdir(dir string, root bool) error {
 	var sudo string = ""
 	if root {
 		sudo = "sudo "
 	}
 
 	command := fmt.Sprintf("%vmkdir -p %v", sudo, dir)
-	cmd := RunCommand(command)
+	cmd,err := RunCommand(command)
 
 	Response(cmd)
+	return err
 }
 
-func Touch(pathToFile string, root bool) {
+func Touch(pathToFile string, root bool) error {
 	var sudo string = ""
 	if root {
 		sudo = "sudo "
 	}
 
 	command := fmt.Sprintf("%vtouch %v", sudo, pathToFile)
-	cmd := RunCommand(command)
+	cmd,err := RunCommand(command)
 
 	Response(cmd)
+	return err
 }
 
-func Echo(input string, output string, typeChange string, root bool) {
+func Echo(input string, output string, typeChange string, root bool) error {
 	var sudo string = ""
 	if root {
 		sudo = "sudo "
 	}
 
 	command := fmt.Sprintf("%vecho -e '%v' %v %v %v", sudo, input, typeChange, sudo ,output)
-	cmd := RunCommand(command)
+	cmd,err := RunCommand(command)
 
 	Response(cmd)
+	return err
 }

@@ -12,20 +12,18 @@ func Error(err error) {
 	}
 }
 
-func Exist(path string) bool {
+func Exist(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
-		return true
+		return true,nil
 	}
 	if os.IsNotExist(err) {
-		return false
+		return false,nil
 	}
-	Error(err)
-	return false
+	return false,err
 }
 
-func GetValue(path string) []byte {
+func GetValue(path string) ([]byte, error) {
 	file, err := os.ReadFile(path)
-	Error(err)
-	return file
+	return file, err
 }
