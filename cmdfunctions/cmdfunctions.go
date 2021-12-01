@@ -13,20 +13,22 @@ func Response(cmd *exec.Cmd) {
 	cmd.Stdin = os.Stdin
 }
 
-func RunCommand(command string, root bool, arg ...string) (*exec.Cmd, error) {
+func RunCommand(command string, root bool, custom string,arg ...string) (*exec.Cmd, error) {
 	var sudo string = "bash -c"
 	if root {
 		sudo = "sudo bash -c"
 	}
-	cmds := fmt.Sprintf("arg='%v'; %v \"%v\"", strings.Join(arg, " "), sudo, command)
+	cmds := fmt.Sprintf("%v arg='%v'; %v \"%v\"", custom,strings.Join(arg, " "), sudo, command)
 	cmd := exec.Command("bash", "-c", cmds)
+	fmt.Println(cmds)
+	Response(cmd)
 	err := cmd.Run()
 	return cmd, err
 }
 
 func Mkdir(dir string, root bool) error {
 	command := "mkdir -p $arg"
-	cmd, err := RunCommand(command, root, dir)
+	cmd, err := RunCommand(command, root, "",dir)
 
 	Response(cmd)
 	return err
@@ -34,15 +36,15 @@ func Mkdir(dir string, root bool) error {
 
 func Touch(pathToFile string, root bool) error {
 	command := "touch $arg"
-	cmd, err := RunCommand(command, root, pathToFile)
+	cmd, err := RunCommand(command, root, "",pathToFile)
 
 	Response(cmd)
 	return err
 }
 
 func Echo(input string, output string, typeChange string, root bool) error {
-	command := "echo -e $arg"
-	cmd, err := RunCommand(command, root, input, typeChange, output)
+	command := "echo -e '$cmd' $arg"
+	cmd, err := RunCommand(command, root, fmt.Sprintf("cmd='%v';", input), typeChange, output)
 
 	Response(cmd)
 	return err

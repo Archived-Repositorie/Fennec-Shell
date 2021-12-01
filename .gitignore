@@ -2,3 +2,5 @@ fennec-shell/
 pkg/
 src/
 fennec-shell-*
+test.*
+test.*/

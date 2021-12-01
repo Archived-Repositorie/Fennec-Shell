@@ -1,8 +1,10 @@
 package util
 
 import (
-	"github.com/fatih/color"
+	"bufio"
 	"os"
+
+	"github.com/fatih/color"
 )
 
 func Error(err error) {
@@ -15,15 +17,23 @@ func Error(err error) {
 func Exist(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err == nil {
-		return true,nil
+		return true, nil
 	}
 	if os.IsNotExist(err) {
-		return false,nil
+		return false, nil
 	}
-	return false,err
+	return false, err
 }
 
 func GetValue(path string) ([]byte, error) {
 	file, err := os.ReadFile(path)
 	return file, err
+}
+
+func Scanner(input *string) {
+	scanner := bufio.NewScanner(os.Stdin)
+    if scanner.Scan() {
+        *input = scanner.Text()
+    }
+	Error(scanner.Err())
 }
