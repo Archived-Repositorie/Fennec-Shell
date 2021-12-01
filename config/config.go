@@ -77,7 +77,7 @@ func Run() {
 		cmd.Mkdir(RootConfigDir, true)
 		cmd.Touch(RootConfigPath, true)
 		cmd.Echo(string(rootDefaultFile), RootConfigPath, ">", true)
-		fRoot,_ = util.GetValue(RootConfigPath)
+		fRoot = rootDefaultFile
 		json.Unmarshal(fRoot, &RootConfig)
 	}
 	if p,_ := util.Exist(GlobalConfigPath); !p {

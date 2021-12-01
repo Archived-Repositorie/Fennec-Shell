@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Response(cmd *exec.Cmd) {
@@ -12,46 +13,36 @@ func Response(cmd *exec.Cmd) {
 	cmd.Stdin = os.Stdin
 }
 
-func RunCommand(command string) (*exec.Cmd, error) {
-	cmd := exec.Command("bash", "-c", command)
+func RunCommand(command string, root bool, arg ...string) (*exec.Cmd, error) {
+	var sudo string = "bash -c"
+	if root {
+		sudo = "sudo bash -c"
+	}
+	cmds := fmt.Sprintf("arg='%v'; %v \"%v\"", strings.Join(arg, " "), sudo, command)
+	cmd := exec.Command("bash", "-c", cmds)
 	err := cmd.Run()
-	return cmd,err
+	return cmd, err
 }
 
 func Mkdir(dir string, root bool) error {
-	var sudo string = ""
-	if root {
-		sudo = "sudo "
-	}
-
-	command := fmt.Sprintf("%vmkdir -p %v", sudo, dir)
-	cmd,err := RunCommand(command)
+	command := "mkdir -p $arg"
+	cmd, err := RunCommand(command, root, dir)
 
 	Response(cmd)
 	return err
 }
 
 func Touch(pathToFile string, root bool) error {
-	var sudo string = ""
-	if root {
-		sudo = "sudo "
-	}
-
-	command := fmt.Sprintf("%vtouch %v", sudo, pathToFile)
-	cmd,err := RunCommand(command)
+	command := "touch $arg"
+	cmd, err := RunCommand(command, root, pathToFile)
 
 	Response(cmd)
 	return err
 }
 
 func Echo(input string, output string, typeChange string, root bool) error {
-	var sudo string = ""
-	if root {
-		sudo = "sudo "
-	}
-
-	command := fmt.Sprintf("%vecho -e '%v' %v %v %v", sudo, input, typeChange, sudo ,output)
-	cmd,err := RunCommand(command)
+	command := "echo -e $arg"
+	cmd, err := RunCommand(command, root, input, typeChange, output)
 
 	Response(cmd)
 	return err
