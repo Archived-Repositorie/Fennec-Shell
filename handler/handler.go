@@ -4,10 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	cmd "fs/cmdfunctions"
+	"fs/commands"
+	"fs/setup"
 	"fs/util"
 	"io/ioutil"
 	"os"
 	"regexp"
+
+	//"regexp"
 	"strings"
 )
 
@@ -20,16 +24,59 @@ type Cmd struct {
 }
 
 func Terminal(command string) {
-	var re = regexp.MustCompile(`(?m)\w+|\"\"[\w\s]*`)
-	args := re.FindAllString(command, -1)
+	var args []string
 	if strings.HasPrefix(command, "/$") {
-		bashCmd := args[0]
-		bashArgs := append(args, bashCmd)
-		cmd, err := cmd.RunCommand(bashCmd, false, strings.Join(bashArgs, " "))
-		util.Error(err)
-		cmd.Run()
+		args = strings.Split(command[2:], " ")
+		if command != "/$" {
+			bashCmd := args[0]
+			bashArgs := args[1:]
+			fmt.Println(strings.Join(bashArgs, " "))
+			cmd, err := cmd.RunCommand(bashCmd+" $arg", false, "", strings.Join(bashArgs, " "))
+			util.Error(err)
+			cmd.Run()
+		} else {
+			err := fmt.Errorf("Give bash command.")
+			util.Error(err)
+		}
 	} else if strings.HasPrefix(command, "/") {
-		fmt.Println(args)
+		re := regexp.MustCompile(`(?m)\w+|\"\"[\w\s]*`)
+		args = re.FindAllString(command, -1)
+		if len(args) >= 1 {
+			cmd := args[0]
+			cmdArgs := args[1:]
+			if commands.Cmds(cmd, strings.Join(cmdArgs, " ")) {
+
+			} else if p, _ := util.Exist(setup.RootConfig.GlobalBin + "/" + cmd); p {
+				cmdDir := setup.RootConfig.GlobalBin + "/" + cmd
+				cmdConfig := cmdDir + "/" + setup.GlobalConfigFile
+				if p, _ := util.Exist(cmdConfig); !p {
+					err := fmt.Errorf("Config doesn't exist.")
+					util.Error(err)
+				}
+				cmdFile, err := util.GetValue(cmdConfig)
+				var cmdJson Cmd
+				util.Error(err)
+				json.Unmarshal(cmdFile, &cmdJson)
+				fmt.Println(true)
+			} else if p, _ := util.Exist(setup.RootConfig.UserBin + "/" + cmd); p {
+				cmdDir := setup.RootConfig.UserBin + "/" + cmd
+				cmdConfig := cmdDir + "/" + setup.UserConfigFile
+				if p, _ := util.Exist(cmdConfig); !p {
+					err := fmt.Errorf("Config doesn't exist.")
+					util.Error(err)
+				}
+			} else {
+				if !commands.Cmds(cmd, strings.Join(cmdArgs, " ")) {
+					err := fmt.Errorf("Command '%v' doesn't exist.", cmd)
+					util.Error(err)
+				}
+			}
+		} else {
+			err := fmt.Errorf("Give command.")
+			util.Error(err)
+		}
+	} else {
+		fmt.Println(command)
 	}
 }
 

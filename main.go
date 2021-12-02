@@ -5,8 +5,9 @@ package main
 import (
 	//cmd "fs/cmdfunctions"
 	"fmt"
-	"fs/config"
+	"fs/globalVar"
 	"fs/handler"
+	"fs/setup"
 	"fs/util"
 	"os/user"
 	"strings"
@@ -15,32 +16,39 @@ import (
 )
 
 type PS1Tags struct {
-	Tag string
+	Tag     string
 	Replace string
 }
-var User,_ = user.Current()
 
-var PS1Replace = []PS1Tags{
-	PS1Tags{
-		Tag: "%user",
-		Replace: User.Name,
-	},
-}
+var User, _ = user.Current()
 
 func main() {
-	config.Run()
+
+	setup.Run()
 	textBold := color.New(color.Bold)
 	textBold.Println("Welcome to Fennec Shell!")
-	PS1 := config.UserConfig.PS1
-	fmt.Printf("\n"+PS1)
-	for _,PS1Tag := range PS1Replace {
-		PS1 = strings.ReplaceAll(PS1, PS1Tag.Tag, PS1Tag.Replace)
-	}
 
 	var input string
+	dir := globalVar.GetDir()
 	for {
+		PS1 := setup.UserConfig.PS1
+		PS1Replace := []PS1Tags{
+			{
+				Tag:     "%user%",
+				Replace: User.Name,
+			},
+			{
+				Tag:     "%dir%",
+				Replace: dir,
+			},
+		}
+		for _, PS1Tag := range PS1Replace {
+			PS1 = strings.ReplaceAll(PS1, PS1Tag.Tag, PS1Tag.Replace)
+		}
+		fmt.Print(PS1)
 		util.Scanner(&input)
 		handler.Terminal(input)
+		dir = globalVar.GetDir()
 	}
-	
+
 }

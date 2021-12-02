@@ -1,4 +1,4 @@
-package config
+package setup
 
 import (
 	"encoding/json"
@@ -33,7 +33,7 @@ var RootConfigDefault = RootConfigStruct{
 
 var RootConfigDir = "/usr/config/fennecshell"
 var RootConfigFile = "config.json"
-var RootConfigPath = RootConfigDir + "/"+RootConfigFile
+var RootConfigPath = RootConfigDir + "/" + RootConfigFile
 var RootConfig RootConfigStruct
 var fRoot, _ = util.GetValue(RootConfigPath)
 var _ = json.Unmarshal(fRoot, &RootConfig)
@@ -45,13 +45,13 @@ type GlobalConfigStruct struct {
 }
 
 var GlobalConfigDefault = GlobalConfigStruct{
-	PS1:    "%user%> ",
+	PS1:    "%user% %dir%> ",
 	Prefix: "/",
 }
 
 var GlobalConfigDir = RootConfig.Global
 var GlobalConfigFile = "config.json"
-var GlobalConfigPath = GlobalConfigDir + "/"+GlobalConfigFile
+var GlobalConfigPath = GlobalConfigDir + "/" + GlobalConfigFile
 var GlobalConfig GlobalConfigStruct
 var fGlobal, _ = util.GetValue(GlobalConfigPath)
 var _ = json.Unmarshal(fGlobal, &GlobalConfig)
@@ -64,14 +64,13 @@ type UserConfigStruct struct {
 
 var UserConfigDir = RootConfig.User
 var UserConfigFile = "config.json"
-var UserConfigPath = UserConfigDir +"/"+UserConfigFile
+var UserConfigPath = UserConfigDir + "/" + UserConfigFile
 var UserConfig UserConfigStruct
 var fUser, _ = util.GetValue(UserConfigPath)
 var _ = json.Unmarshal(fUser, &UserConfig)
 
 func Run() {
 	//pr, _ := util.Exist()
-	fmt.Println(RootConfigPath)
 	rootDefaultFile, _ := json.Marshal(RootConfigDefault)
 	globalDefaultFile, _ := json.Marshal(GlobalConfigDefault)
 	userDefaultFile := globalDefaultFile
@@ -90,6 +89,12 @@ func Run() {
 		cmd.Mkdir(GlobalConfigDir, true)
 		cmd.Touch(GlobalConfigPath, true)
 		cmd.Echo(string(globalDefaultFile), RootConfig.GlobalConfig, ">", true)
+	}
+	if p, _ := util.Exist(RootConfig.GlobalBin); !p {
+		cmd.Mkdir(RootConfig.GlobalBin, true)
+	}
+	if p, _ := util.Exist(RootConfig.UserBin); !p {
+		cmd.Mkdir(RootConfig.UserBin, false)
 	}
 	if p, _ := util.Exist(UserConfigPath); !p {
 		cmd.Mkdir(UserConfigDir, false)

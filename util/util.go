@@ -10,7 +10,7 @@ import (
 func Error(err error) {
 	if err != nil {
 		c := color.New(color.BgRed, color.Bold)
-		c.Printf("\nError: %v", err.Error())
+		c.Printf("\nError: %v\n", err.Error())
 	}
 }
 

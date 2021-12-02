@@ -20,7 +20,6 @@ func RunCommand(command string, root bool, custom string,arg ...string) (*exec.C
 	}
 	cmds := fmt.Sprintf("%v arg='%v'; %v \"%v\"", custom,strings.Join(arg, " "), sudo, command)
 	cmd := exec.Command("bash", "-c", cmds)
-	fmt.Println(cmds)
 	Response(cmd)
 	err := cmd.Run()
 	return cmd, err
