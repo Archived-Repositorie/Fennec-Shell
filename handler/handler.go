@@ -39,8 +39,13 @@ func Terminal(command string) {
 			util.Error(err)
 		}
 	} else if strings.HasPrefix(command, "/") {
-		re := regexp.MustCompile(`(?m)\w+|\"\"[\w\s]*`)
-		args = re.FindAllString(command, -1)
+		re := regexp.MustCompile(`"(.+?)"|'(.+?)'|(\S+)`)
+		var args []string
+		res := re.FindAllStringSubmatch(command[1:], -1)
+		for _, list := range res {
+			list := list[1:]
+			args = append(args, strings.Join(list, ""))
+		}
 		if len(args) >= 1 {
 			cmd := args[0]
 			cmdArgs := args[1:]
@@ -52,18 +57,25 @@ func Terminal(command string) {
 				if p, _ := util.Exist(cmdConfig); !p {
 					err := fmt.Errorf("Config doesn't exist.")
 					util.Error(err)
+				} else {
+					cmdFile, err := util.GetValue(cmdConfig)
+					var cmdJson Cmd
+					util.Error(err)
+					json.Unmarshal(cmdFile, &cmdJson)
+					fmt.Println(cmdJson)
 				}
-				cmdFile, err := util.GetValue(cmdConfig)
-				var cmdJson Cmd
-				util.Error(err)
-				json.Unmarshal(cmdFile, &cmdJson)
-				fmt.Println(true)
 			} else if p, _ := util.Exist(setup.RootConfig.UserBin + "/" + cmd); p {
 				cmdDir := setup.RootConfig.UserBin + "/" + cmd
 				cmdConfig := cmdDir + "/" + setup.UserConfigFile
 				if p, _ := util.Exist(cmdConfig); !p {
 					err := fmt.Errorf("Config doesn't exist.")
 					util.Error(err)
+				} else {
+					cmdFile, err := util.GetValue(cmdConfig)
+					var cmdJson Cmd
+					util.Error(err)
+					json.Unmarshal(cmdFile, &cmdJson)
+					fmt.Println(cmdJson)
 				}
 			} else {
 				if !commands.Cmds(cmd, strings.Join(cmdArgs, " ")) {

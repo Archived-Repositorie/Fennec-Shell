@@ -9,6 +9,7 @@ import (
 	"fs/handler"
 	"fs/setup"
 	"fs/util"
+	"os"
 	"os/user"
 	"strings"
 
@@ -23,7 +24,7 @@ type PS1Tags struct {
 var User, _ = user.Current()
 
 func main() {
-
+	os.Chdir(User.HomeDir)
 	setup.Run()
 	textBold := color.New(color.Bold)
 	textBold.Println("Welcome to Fennec Shell!")

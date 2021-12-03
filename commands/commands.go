@@ -9,11 +9,10 @@ import (
 )
 
 func Cmds(cmd string, args ...string) bool {
-	dirRoot, _ := os.Getwd()
 	switch cmd {
 	case "cd":
 		dir := strings.Join(args, " ")
-		if p, _ := util.Exist(dirRoot + "/" + dir); !p {
+		if p, _ := util.Exist(dir); !p {
 			err := fmt.Errorf("Directory './%v' doesn't exit.", dir)
 			util.Error(err)
 		} else {
@@ -25,5 +24,4 @@ func Cmds(cmd string, args ...string) bool {
 	default:
 		return false
 	}
-	return false
 }
