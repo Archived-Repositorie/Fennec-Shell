@@ -4,27 +4,40 @@ package main
 
 import (
 	//cmd "fs/cmdfunctions"
+	"flag"
 	"fmt"
 	"fs/globalVar"
 	"fs/handler"
 	"fs/setup"
 	"fs/util"
 	"os"
-	"os/user"
 	"strings"
 
 	"github.com/fatih/color"
 )
+
+func main() {
+	script := flag.Bool("c", false, "run command inside string")
+	flag.Parse()
+	if *script {
+		cmdArgs := flag.Args()
+		if len(cmdArgs) > 0 {
+			handler.Terminal(strings.Join(cmdArgs, " "))
+		} else {
+			fmt.Println(cmdArgs)
+		}
+	} else {
+		command()
+	}
+}
 
 type PS1Tags struct {
 	Tag     string
 	Replace string
 }
 
-var User, _ = user.Current()
-
-func main() {
-	os.Chdir(User.HomeDir)
+func command() {
+	os.Chdir(globalVar.User.HomeDir)
 	setup.Run()
 	textBold := color.New(color.Bold)
 	textBold.Println("Welcome to Fennec Shell!")
@@ -36,7 +49,7 @@ func main() {
 		PS1Replace := []PS1Tags{
 			{
 				Tag:     "%user%",
-				Replace: User.Name,
+				Replace: globalVar.User.Username,
 			},
 			{
 				Tag:     "%dir%",
@@ -51,5 +64,4 @@ func main() {
 		handler.Terminal(input)
 		dir = globalVar.GetDir()
 	}
-
 }
